@@ -12,43 +12,41 @@ Before running the project, ensure you have:
 - [.NET 9 SDK](https://dotnet.microsoft.com/download)
 - [Node.js & npm](https://nodejs.org/) (LTS recommended)
 - [Angular CLI](https://angular.io/guide/setup-local) installed globally
-- [SQL Server](https://www.microsoft.com/en-us/sql-server/sql-server-downloads)
+- [PostgreSQL](https://www.postgresql.org/download/) installed and running
 
 ---
 
 ## 2. Database Setup
 
-1. Open **SQL Server Management Studio (SSMS)** or use `sqlcmd`.  
-2. Run the script [`ecommerce.sql`](./ecommerce.sql).  
-   - This will create the `Ecommerce` database, `Products` table, and insert **15 sample products**.
+1. Create the database:
+   ```sql
+   CREATE DATABASE ecommerce;
+   ```
+2. Run the provided ecommerce.sql script to create the Products table and insert sample data.
 
+3. Update appsettings.json with your PostgreSQL credentials(default port 5432).
 ---
 
 ## 3. Backend Setup (.NET Core Web API)
 
 1. Navigate to the backend project folder:
    ```bash
-   cd backend
+   cd Ecommerce
    ```
 2. Restore dependencies:
    ```bash
    dotnet restore
    ```
-3. Update the connection string in **`appsettings.json`** to match your SQL Server instance:
-   ```json
-   "ConnectionStrings": {
-     "DefaultConnection": "Server=localhost;Database=Ecommerce;Trusted_Connection=True;TrustServerCertificate=True;"
-   }
-   ```
-4. Apply EF Core migrations (if needed):
+
+3. Apply EF Core migrations (if needed):
    ```bash
    dotnet ef database update
    ```
-5. Run the API:
+4. Run the API:
    ```bash
    dotnet run
    ```
-6. The API will be available at:
+5. The API will be available at:
    ```
    https://localhost:5001/api/products
    ```
@@ -59,7 +57,7 @@ Before running the project, ensure you have:
 
 1. Navigate to the frontend project folder:
    ```bash
-   cd frontend
+   cd ecommerce-ui
    ```
 2. Install dependencies:
    ```bash
@@ -94,23 +92,15 @@ Before running the project, ensure you have:
 
 ---
 
-## 6. Screenshots (Optional)
 
-_Add screenshots of the product list and product detail pages here._
-
----
-
-## 7. Project Structure
+## 6. Project Structure
 
 ```
-/backend    -> .NET Core Web API (C#)
-/frontend   -> Angular Application
+/Ecommerce    -> .NET Core Web API (C#)
+/ecommerce-ui   -> Angular Application
 /ecommerce.sql -> Database creation & sample data
 README.md   -> Setup instructions
 ```
 
 ---
 
-## 8. Author
-
-Developed by **[Your Name]** as part of an assignment/demo project.
