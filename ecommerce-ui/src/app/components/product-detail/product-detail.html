@@ -1,1 +1,15 @@
-<p>product-detail works!</p>
+ <a routerLink="/products">← Back to products</a>
+
+    <div *ngIf="loading" class="loading">Loading…</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <section class="detail" *ngIf="product && !loading">
+      <img [src]="product.imageUrl || placeholder" alt="{{ product.name }}" />
+      <div class="meta">
+        <h2>{{ product.name }}</h2>
+        <div class="price">{{ product.price | currency }}</div>
+        <div class="category">Category: {{ product.category }}</div>
+        <div class="stock">In stock: {{ product.stockQuantity }}</div>
+        <p class="desc">{{ product.description }}</p>
+      </div>
+    </section>

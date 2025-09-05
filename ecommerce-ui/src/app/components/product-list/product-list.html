@@ -1,1 +1,26 @@
-<p>product-list works!</p>
+ <section class="filters">
+      <input [(ngModel)]="search" (keyup.enter)="applyFilters()" placeholder="Search name or description" />
+      <select [(ngModel)]="category" (change)="applyFilters()">
+        <option value="">All Categories</option>
+        <option *ngFor="let c of categories" [value]="c">{{ c }}</option>
+      </select>
+      <input type="number" [(ngModel)]="minPrice" (change)="applyFilters()" placeholder="Min price" min="0" />
+      <input type="number" [(ngModel)]="maxPrice" (change)="applyFilters()" placeholder="Max price" min="0" />
+      <button (click)="applyFilters()">Filter</button>
+      <button (click)="clearFilters()">Clear</button>
+    </section>
+
+    <div *ngIf="loading" class="loading">Loading products…</div>
+    <div *ngIf="error" class="error">{{ error }}</div>
+
+    <section class="grid" *ngIf="!loading && !error">
+      <article class="card" *ngFor="let p of products" [routerLink]="['/products', p.id]">
+        <img [src]="p.imageUrl || placeholder" alt="{{ p.name }}" />
+        <div class="info">
+          <h3>{{ p.name }}</h3>
+          <div class="price">{{ p.price }}</div>
+          <div class="category">{{ p.category }}</div>
+        </div>
+      </article>
+      <div *ngIf="products.length === 0" class="empty">No products found.</div>
+    </section>

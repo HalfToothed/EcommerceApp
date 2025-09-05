@@ -3,12 +3,12 @@ using Ecommerce.DataLayer.Interfaces;
 using Ecommerce.Models;
 using Ecommerce.Entities;
 using Microsoft.AspNetCore.Authorization;
+using Ecommerce.DataLayer.Repositories;
 
 namespace Ecommerce.Api.Controllers
 {
     [ApiController]
-    [Authorize]
-    [Route("[controller]")]
+    [Route("/products")]
     public class ProductController : ControllerBase
     {
         private readonly IProductRepository productRepository;
@@ -17,57 +17,31 @@ namespace Ecommerce.Api.Controllers
             productRepository = _productRepository;
         }
 
-        [HttpPost("Add")]
-        public async Task<IActionResult> Add([FromBody] ProductModel model) 
+        [HttpGet]
+        public async Task<IActionResult> GetProducts(
+          [FromQuery] string? category,
+          [FromQuery] string? search,
+          [FromQuery] decimal? minPrice,
+          [FromQuery] decimal? maxPrice)
         {
-            var entity = new Product 
-            { 
-                Name = model.Name,
-                Description = model.Description,
-                Category = model.Category,
-                ImageUrl = model.ImageUrl,
-                StockQuantity = model.StockQuantity,
-                CreateDate = model.CreateDate,
-                LastUpdatedDate = model.LastUpdatedDate,
-            };
+            if (!string.IsNullOrEmpty(category))
+                return Ok(await productRepository.GetByCategoryAsync(category));
 
-            productRepository.Add(entity);
-            return Ok();
+            if (!string.IsNullOrEmpty(search))
+                return Ok(await productRepository.SearchAsync(search));
+
+            if (minPrice.HasValue && maxPrice.HasValue)
+                return Ok(await productRepository.FilterByPriceRangeAsync(minPrice.Value, maxPrice.Value));
+
+            return Ok(await productRepository.GetAllAsync());
         }
 
-        [HttpPost("Update")]
-        public async Task<IActionResult> Update(ProductEditModel model) 
-        {
-            var entity = new Product
-            {
-                Id = model.Id,
-                Name = model.Name,
-                Description = model.Description,
-                Category = model.Category,
-                ImageUrl = model.ImageUrl,
-                StockQuantity = model.StockQuantity,
-                CreateDate = model.CreateDate,
-                LastUpdatedDate = model.LastUpdatedDate,
-            };
-
-            productRepository.Update(entity);
-            return Ok();
-
-        }
-
-        [HttpGet("GetProducts")]
-        public async Task<IActionResult> Products()
-        {
-            var products = productRepository.Products();
-            return Ok(products);
-        }
-        
-        [HttpGet("/{id}")]
+        [HttpGet("/products/{id}")]
         public async Task<IActionResult> GetProductById(int id)
         {
-            var product = productRepository.GetProductById(id);
+            var product = await productRepository.GetByIdAsync(id);
+            if (product == null) return NotFound();
             return Ok(product);
         }
-        
     }
 }

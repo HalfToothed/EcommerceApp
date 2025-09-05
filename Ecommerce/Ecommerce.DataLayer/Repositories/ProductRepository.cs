@@ -1,6 +1,7 @@
 ﻿
 using Ecommerce.DataLayer.Interfaces;
 using Ecommerce.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -18,23 +19,25 @@ namespace Ecommerce.DataLayer.Repositories
             _context = context;
         }
 
-        public void Add(Product product)
-        {
-            _context.Products.Add(product);
-            _context.SaveChanges();
-        }
-        public void Update(Product product) 
-        {
-            _context.Products.Update(product);
-            _context.SaveChanges();
-        }
-        public List<Product> Products()
-        {
-            return _context.Products.ToList();
-        }
-        public Product GetProductById(int id)
-        {
-            return _context.Products.Where(x => x.Id == id).FirstOrDefault();
-        }
+        public async Task<IEnumerable<Product>> GetAllAsync()
+           => await _context.Products.ToListAsync();
+
+        public async Task<Product?> GetByIdAsync(int id)
+            => await _context.Products.FindAsync(id);
+
+        public async Task<IEnumerable<Product>> GetByCategoryAsync(string category)
+            => await _context.Products
+                .Where(p => p.Category.ToLower() == category.ToLower())
+                .ToListAsync();
+
+        public async Task<IEnumerable<Product>> SearchAsync(string searchTerm)
+            => await _context.Products
+                .Where(p => p.Name.Contains(searchTerm) || p.Description.Contains(searchTerm))
+                .ToListAsync();
+
+        public async Task<IEnumerable<Product>> FilterByPriceRangeAsync(decimal minPrice, decimal maxPrice)
+            => await _context.Products
+                .Where(p => p.Price >= minPrice && p.Price <= maxPrice)
+                .ToListAsync();
     }
 }

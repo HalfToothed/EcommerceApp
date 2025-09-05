@@ -10,10 +10,12 @@ namespace Ecommerce.DataLayer.Interfaces
 {
     public interface IProductRepository
     {
-        void Add(Product product);
-        void Update(Product product);
-        List<Product> Products();
-        Product GetProductById(int id);
-      
+        Task<IEnumerable<Product>> GetAllAsync();
+        Task<Product?> GetByIdAsync(int id);
+        Task<IEnumerable<Product>> GetByCategoryAsync(string category);
+        Task<IEnumerable<Product>> SearchAsync(string searchTerm);
+        Task<IEnumerable<Product>> FilterByPriceRangeAsync(decimal minPrice, decimal maxPrice);
+
+
     }
 }
